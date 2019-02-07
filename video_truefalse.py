@@ -1,5 +1,6 @@
 import cv2
 import numpy as np 
+import matplotlib.pyplot as plt
 
 ### video implementation
 
@@ -10,13 +11,13 @@ L2_t = 255 #light grey upper threshhold
 D1_t = 178 #dark grey lower bound
 D2_t = 200 #dark grey upper bound
 
-def R_component(r):
+def R_component(r): # Comparing the red component with the given threshold
     if(r > R_t):
         return 1
     else:
         return 0
 
-def RGB_compare(b, g, r):
+def RGB_compare(b, g, r): # Comparing the red componenet values with green and blue
     if (r >= g > b):
         return 1
     else:
@@ -29,7 +30,7 @@ def saturation(s, r):
     else:
         return 0
 
-def is_fire_pixel(b, r, g, s):
+def is_fire_pixel(b, r, g, s):  # Chromatic analysis
     if(R_component(r) and RGB_compare(b, g, r) and saturation(s, r)):
         return 1
     else:
@@ -41,35 +42,38 @@ def is_grey(b, r, g):
     else:
         return 0
 
-def grey_intensity(v):
+def grey_intensity(v):      # Checking for the intensity level for smoke detection
     if(L1_t <= v <= L2_t or D1_t <= v <= D2_t):
         return 1
     else:
         return 0
 
-def is_smoke_pixel(b, r, g, v):
+def is_smoke_pixel(b, r, g, v):     # Checking for smoke pixel
     if(is_grey(b, r, g) and grey_intensity(v)):
         return 1
     else:
         return 0
         
 
-cap = cv2.VideoCapture('./videos/cornerroom.mp4')
+cap = cv2.VideoCapture('E:/General/Personal/Pro/DST 2017/Fire detection/dst/sdf/videos/videojapan.mp4')  # Reading the video file
 _, frame = cap.read()
-one = np.zeros((frame.shape[0], frame.shape[1], frame.shape[2]))
+one = np.zeros((frame.shape[0], frame.shape[1], frame.shape[2]))        # First frame 
 one_cnt = 0
-two = np.ones((frame.shape[0], frame.shape[1], frame.shape[2]))
+two = np.ones((frame.shape[0], frame.shape[1], frame.shape[2]))         # Second frame
 two_cnt = 0
-
+x=-1 #x axis
 while(1):
     #take each frame in RBG format
     _, frame = cap.read()
+    if _==False:
+        break
+    x+=1
     #print(_)
     #convert BGR to HSV
     img_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    img_fp = np.zeros((frame.shape[0], frame.shape[1])) #final fire pixel array
-    img_sp = np.zeros((frame.shape[0], frame.shape[1])) #final smoke pixel array
+    img_fp = np.zeros((frame.shape[0], frame.shape[1]),dtype=np.uint8) #final fire pixel array
+    img_sp = np.zeros((frame.shape[0], frame.shape[1]),dtype=np.uint8) #final smoke pixel array
     fire_pixel = np.zeros((frame.shape[0], frame.shape[1], frame.shape[2]))
     smoke_pixel = np.zeros((frame.shape[0], frame.shape[1], frame.shape[2]))
 
@@ -89,6 +93,7 @@ while(1):
                 img_fp[i][j] = 1
                 fire_pixel[i][j] = bgr
                 tre_cnt += 1
+                
 
             #smoke pixel detection
             if(is_smoke_pixel(blue, red, green, intens)):
@@ -97,7 +102,7 @@ while(1):
 
     tre = fire_pixel
     tre_cnt = tre_cnt
-
+    plt.scatter(x,tre_cnt,alpha=0.5,color='blue')
     FD_t1 = np.absolute(np.subtract(tre, two))
     #print(tre)
     FD_t = np.absolute(np.subtract(two, one))
@@ -116,13 +121,17 @@ while(1):
 
     one = two
     two = tre
-
+    '''
     cv2.imshow('frame', frame)
     cv2.imshow('img_fp', img_fp)
     cv2.imshow('img_sp', img_sp)
-
+    '''
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
         break
 
+plt.xlabel('Frame')
+plt.ylabel('No of fire pixels')
+plt.show()
+cap.release()
 cv2.destroyAllWindows()
