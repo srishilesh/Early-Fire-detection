@@ -65,7 +65,7 @@ x=-1 #x axis
 while(1):
     #take each frame in RBG format
     _, frame = cap.read()
-    if _==False:
+    if _==False:    # If Frame is not read properly , them breaks
         break
     x+=1
     #print(_)
@@ -74,8 +74,8 @@ while(1):
 
     img_fp = np.zeros((frame.shape[0], frame.shape[1]),dtype=np.uint8) #final fire pixel array
     img_sp = np.zeros((frame.shape[0], frame.shape[1]),dtype=np.uint8) #final smoke pixel array
-    fire_pixel = np.zeros((frame.shape[0], frame.shape[1], frame.shape[2]))
-    smoke_pixel = np.zeros((frame.shape[0], frame.shape[1], frame.shape[2]))
+    fire_pixel = np.zeros((frame.shape[0], frame.shape[1], frame.shape[2]))     # To keep track of Fire pixels
+    smoke_pixel = np.zeros((frame.shape[0], frame.shape[1], frame.shape[2]))    # To keep track of Smoke pixels
 
     tre_cnt = 0
 
@@ -90,9 +90,9 @@ while(1):
             intens = hsv[2]
             #fire pixel detection
             if(is_fire_pixel(blue, red, green, satur)):
-                img_fp[i][j] = 1
-                fire_pixel[i][j] = bgr
-                tre_cnt += 1
+                img_fp[i][j] = 1    # Changing in Grayscale image
+                fire_pixel[i][j] = bgr  # Storing the fire pixels
+                tre_cnt += 1        # Count of Fire pixels
                 
 
             #smoke pixel detection
@@ -102,19 +102,19 @@ while(1):
 
     tre = fire_pixel
     tre_cnt = tre_cnt
-    plt.scatter(x,tre_cnt,alpha=0.5,color='blue')
-    FD_t1 = np.absolute(np.subtract(tre, two))
+    plt.scatter(x,tre_cnt,alpha=0.5,color='blue')   # Scattering the fire pixel popints
+    FD_t1 = np.absolute(np.subtract(tre, two))  # Calculate the Fire disorder between 2-3 
     #print(tre)
-    FD_t = np.absolute(np.subtract(two, one))
-    FD = np.divide(np.absolute(FD_t1-FD_t), FD_t, out=np.zeros_like(np.abs(FD_t1-FD_t)), where=FD_t!=0)
-    print(np.amax(FD))
-    per = float((FD>64.0).sum())/FD.size
+    FD_t = np.absolute(np.subtract(two, one))   # Calculate the Fire disorder between 1-2
+    FD = np.divide(np.absolute(FD_t1-FD_t), FD_t, out=np.zeros_like(np.abs(FD_t1-FD_t)), where=FD_t!=0)     # Checking with Fire disorder threshold value
+    print(np.amax(FD))      # Printing maximum fire disorder value
+    per = float((FD>64.0).sum())/FD.size    
     #num = max(one_cnt, two_cnt, tre_cnt)
     #mean_val = np.divide(FD.sum(), num)
     print("FD>64.0sum : ", (FD>64.0).sum())
     print("FD size   : ", FD.size)
     print("percentage: ", per)
-    if(per >= 0.00001):
+    if(per >= 0.00001):         # Check with threshold value
         print("Real flame")
     else:   
         print("Fake flame")
@@ -122,16 +122,16 @@ while(1):
     one = two
     two = tre
     '''
-    cv2.imshow('frame', frame)
-    cv2.imshow('img_fp', img_fp)
-    cv2.imshow('img_sp', img_sp)
+    cv2.imshow('frame', frame)      # Display video file
+    cv2.imshow('img_fp', img_fp)    # Display Fire pixels
+    cv2.imshow('img_sp', img_sp)    # Display smoke pixels
     '''
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
         break
 
-plt.xlabel('Frame')
-plt.ylabel('No of fire pixels')
-plt.show()
+plt.xlabel('Frame')     # Set xlabel for graph
+plt.ylabel('No of fire pixels') # Set ylabel for graph
+plt.show()  # Print graph
 cap.release()
 cv2.destroyAllWindows()
