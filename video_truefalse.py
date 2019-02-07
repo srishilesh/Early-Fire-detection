@@ -54,7 +54,7 @@ def is_smoke_pixel(b, r, g, v):
         return 0
         
 
-cap = cv2.VideoCapture('./videos/paper_240.mp4')
+cap = cv2.VideoCapture('./videos/cornerroom.mp4')
 _, frame = cap.read()
 one = np.zeros((frame.shape[0], frame.shape[1], frame.shape[2]))
 one_cnt = 0
@@ -102,14 +102,14 @@ while(1):
     #print(tre)
     FD_t = np.absolute(np.subtract(two, one))
     FD = np.divide(np.absolute(FD_t1-FD_t), FD_t, out=np.zeros_like(np.abs(FD_t1-FD_t)), where=FD_t!=0)
-    
-    per = float((FD>1.0).sum())/FD.size
+    print(np.amax(FD))
+    per = float((FD>64.0).sum())/FD.size
     #num = max(one_cnt, two_cnt, tre_cnt)
     #mean_val = np.divide(FD.sum(), num)
-    print("FD>1.0sum : ", (FD>1.0).sum())
+    print("FD>64.0sum : ", (FD>64.0).sum())
     print("FD size   : ", FD.size)
     print("percentage: ", per)
-    if(per >= 0.0003):
+    if(per >= 0.00001):
         print("Real flame")
     else:   
         print("Fake flame")
