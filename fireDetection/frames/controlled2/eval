@@ -1,0 +1,13 @@
+========================performance metrics============================
+#true_positive    #real fire is detected as real   : 99
+#false_positive   #false fire is detected as real  : 0
+#true_negative    #fasle fire is detected as false : 1
+#false_negative   #real fire is detected as fasle  : 0
+Accuracy   :1.0
+Precision  :1.0
+Recall     :1.0
+Error rate :0.0
+F1 score   :1.0
+FAR        :0.0
+FRR        :0.0
+
