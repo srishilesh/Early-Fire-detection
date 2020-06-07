@@ -1,6 +1,0 @@
-OpenCV_Python image open and pixelextracction
-https://www.bogotobogo.com/python/OpenCV_Python/python_opencv3_basic_image_operations_pixel_access_image_load.php
-
-OpenCV_Python rgb to hsv
-https://docs.opencv.org/3.2.0/df/d9d/tutorial_py_colorspaces.html
-
